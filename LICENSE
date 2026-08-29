@@ -1,15 +1,14 @@
-PolyForm Noncommercial License 1.0.0
+GNU AFFERO GENERAL PUBLIC LICENSE
+Version 3, 19 November 2007
 
-<https://polyformproject.org/licenses/noncommercial/1.0.0>
+Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
+Everyone is permitted to copy and distribute verbatim copies
+of this license document, but changing it is not allowed.
 
-1. Grant of License
-The Licensor grants you a copyright license to do everything with the Software that would otherwise infringe the Licensor's copyright in it, for Noncommercial Purposes only.
+Preamble
 
-2. Noncommercial Purposes
-Noncommercial Purposes are purposes that are not intended for or directed toward commercial advantage or monetary compensation.
+The GNU Affero General Public License is a free, copyleft license for
+software and other kinds of works, specifically designed to ensure
+cooperation with the community in the case of network server software.
 
-3. Notices
-You must ensure that everyone who gets a copy of any part of this software from you also gets a copy of this license.
-
-4. No Warranties
-The Software is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement.
+[Full AGPL-3.0 text applies: https://www.gnu.org/licenses/agpl-3.0.txt]
