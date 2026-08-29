@@ -1,0 +1,12 @@
+{
+  "cv2": "opencv-python",
+  "PIL": "Pillow",
+  "sklearn": "scikit-learn",
+  "yaml": "PyYAML",
+  "bs4": "beautifulsoup4",
+  "dotenv": "python-dotenv",
+  "dateutil": "python-dateutil",
+  "jwt": "PyJWT",
+  "Crypto": "pycryptodome",
+  "git": "GitPython"
+}

@@ -1,0 +1,39 @@
+name: Release packages
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21.x"
+      - name: Test release source
+        run: go test ./...
+      - name: Create platform archives
+        run: go run ./scripts/release-package -version "${GITHUB_REF_NAME}"
+      - name: Verify release checksums
+        run: (cd dist && sha256sum --check checksums.txt)
+      - name: Publish GitHub release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Enumerate this tag's expected assets rather than globbing dist/*,
+          # so a reused workspace can never publish stale artifacts.
+          gh release create "${GITHUB_REF_NAME}" \
+            "dist/phantomguard_${GITHUB_REF_NAME}_linux_amd64.tar.gz" \
+            "dist/phantomguard_${GITHUB_REF_NAME}_linux_arm64.tar.gz" \
+            "dist/phantomguard_${GITHUB_REF_NAME}_darwin_amd64.tar.gz" \
+            "dist/phantomguard_${GITHUB_REF_NAME}_darwin_arm64.tar.gz" \
+            "dist/phantomguard_${GITHUB_REF_NAME}_windows_amd64.zip" \
+            "dist/phantomguard_${GITHUB_REF_NAME}_windows_arm64.zip" \
+            dist/checksums.txt \
+            --generate-notes --title "PhantomGuard ${GITHUB_REF_NAME}"

@@ -1,0 +1,1 @@
+"""Static dependency extractors."""

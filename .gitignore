@@ -1,0 +1,8 @@
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+bin/
+dist/
+/phantomguard
+/phantomguard.exe

@@ -1,0 +1,9 @@
+# Demonstration fixture only — do not execute this file.
+#
+# Copy this file to phantom_dependency_demo.py, stage it, and run:
+#   phantomguard scan --staged
+#
+# The module name below is deliberately unique and should return a PyPI 404.
+# PhantomGuard therefore reports it as PHANTOM and blocks the commit.
+
+import phantomguard_nonexistent_dependency_20260716_xk9v

@@ -1,0 +1,4 @@
+[phantomguard]
+# Archived with the Python prototype; the Go release uses .phantomguard.json.
+# These are explicit, reviewed development-only tools declared in pyproject.toml.
+allow = ["pytest", "ruff"]

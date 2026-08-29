@@ -1,0 +1,6 @@
+- id: phantomguard
+  name: PhantomGuard
+  entry: phantomguard scan --staged
+  language: python
+  pass_filenames: false
+  stages: [pre-commit]

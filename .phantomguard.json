@@ -1,0 +1,9 @@
+{
+  "fail_mode": "warn",
+  "languages": ["python", "javascript", "go"],
+  "ignore": ["archive/**", "demo/**", "vendor/**", "**/migrations/**"],
+  "allow": [],
+  "aliases": {},
+  "cache_positive_ttl_hours": 168,
+  "cache_negative_ttl_hours": 1
+}
