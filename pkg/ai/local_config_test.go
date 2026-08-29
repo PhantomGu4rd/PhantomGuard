@@ -40,7 +40,14 @@ func TestSaveAndLoadLocalConfig(t *testing.T) {
 }
 
 func TestLoadLocalConfigRejectsMissingAndUnknownFields(t *testing.T) {
-	path := filepath.Join(t.TempDir(), "ai.json")
+	dir := filepath.Join(t.TempDir(), "config")
+	if err := os.MkdirAll(dir, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chmod(dir, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(dir, "ai.json")
 	if _, err := LoadLocalConfig(path); err == nil || !strings.Contains(err.Error(), "ai setup") {
 		t.Fatalf("missing local config error = %v", err)
 	}
@@ -53,7 +60,14 @@ func TestLoadLocalConfigRejectsMissingAndUnknownFields(t *testing.T) {
 }
 
 func TestLoadLocalConfigRejectsTrailingJSONContent(t *testing.T) {
-	path := filepath.Join(t.TempDir(), "ai.json")
+	dir := filepath.Join(t.TempDir(), "config")
+	if err := os.MkdirAll(dir, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chmod(dir, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(dir, "ai.json")
 	contents := `{"provider":"openai","model":"gpt-5.6","api_key":"test"} {"provider":"openai"}`
 	if err := os.WriteFile(path, []byte(contents), 0o600); err != nil {
 		t.Fatal(err)
