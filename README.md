@@ -326,5 +326,4 @@ The Docker image contains the binary, Git, and CA certificates so `phantomguard 
 - Typosquat suggestions come from the embedded top-1,000 PyPI and npm datasets. Review source provenance and diffs before refreshing them; do not download popularity data during a hook run.
 
 ## License
-
-PhantomGuard is released under the PolyForm Noncommercial License 1.0.0. Modifying and sharing this code is encouraged for non-commercial use with proper attribution.
+PhantomGuard is released under the PolyForm Noncommercial License 1.0.0. Modifying and sharing this code is encouraged for non-commercial use with attribution.
