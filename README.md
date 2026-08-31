@@ -351,3 +351,4 @@ The Docker image contains the binary, Git, and CA certificates so `phantomguard 
 ## License
 
 PhantomGuard is released under the PolyForm Noncommercial License 1.0.0. Modifying and sharing this code is encouraged for non-commercial use with attribution.
+
