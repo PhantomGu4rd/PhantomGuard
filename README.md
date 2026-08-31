@@ -312,7 +312,7 @@ phantomguard install
 
 The project uses Go's standard library at runtime. From a source checkout:
 
-```sh
+```sh 
 go test ./...
 go vet ./...
 make check
