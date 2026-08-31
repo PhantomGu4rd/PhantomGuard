@@ -344,7 +344,7 @@ The Docker image contains the binary, Git, and CA certificates so `phantomguard 
 ### Roadmap
 
 * Expand static analysis to **Rust (Cargo)**, **Java (Maven/Gradle)**, and **C/C++ (CMake/Conan)**.
-* Enhance extraction algorithms for complex multi-package monorepos and private workspace setups.
+* Enhance extraction algorithms for complex multi-package monorepos and private workspace setups. 
 
 ---
 
