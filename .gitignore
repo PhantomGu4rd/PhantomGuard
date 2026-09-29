@@ -6,3 +6,25 @@ bin/
 dist/
 /phantomguard
 /phantomguard.exe
+
+# Credentials and secrets — must never be committed
+.env
+.env.*
+.npmrc
+.pypirc
+.dockercfg
+secrets.yml
+secrets.yaml
+secrets.json
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+id_rsa*
+id_dsa*
+id_ecdsa*
+id_ed25519*
+.aws/
+.ssh/
+
