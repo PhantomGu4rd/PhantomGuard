@@ -2,7 +2,7 @@
 
 A deterministic, terminal-first dependency verifier and Git pre-commit hook. It statically analyzes Python, JavaScript/TypeScript, and Go files to catch hallucinated or mistyped dependencies before they reach a commit, without executing any code.
 
-**v0.1.3** | Go binary | CLI + TUI + Git pre-commit hook
+**v0.1.4** | Go binary | CLI + TUI + Git pre-commit hook
 
 ---
 
