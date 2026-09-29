@@ -160,9 +160,15 @@ On Windows, an installed pre-commit hook first uses the official per-user instal
 
 ### Optional AI advisor
 
-AI is an opt-in advisory convenience, not part of the security decision. Neither `verify`, the Git hook, nor the TUI reads AI configuration or sends data to an AI provider.
+**AI is an opt-in advisory convenience, not part of the security decision.** Only the manually invoked `phantomguard ai explain` command uses AI; neither `verify`, the Git hook, nor the TUI reads AI configuration or sends data to any external service.
 
-If you choose to enable it, run:
+**The AI boundary is strict:**
+- ✅ `phantomguard verify` – deterministic registry checks, **no AI calls**
+- ✅ `phantomguard install` and hooks – **no AI or external calls**
+- ✅ `phantomguard tui` – **no AI configuration loaded**
+- ⚠️ `phantomguard ai explain <package>` – optional, manual-only advisory (never blocks commits)
+
+If you choose to enable the optional advisor, run:
 
 ```sh
 phantomguard ai setup
@@ -183,6 +189,26 @@ The command reruns deterministic staged verification and accepts only the matchi
 `phantomguard fix` is intentionally interactive. It requires a clean unstaged working tree, validates the proposed replacement with the target registry, prints a unified diff, requires `y` confirmation, writes the file, and verifies it again. If post-write validation fails, the original content is restored.
 
 Use it after reviewing a deterministic finding, not as a blind automated rewrite.
+
+### Credential Security
+
+PhantomGuard actively protects your credentials:
+
+**Secrets are never scanned.** Files containing `.env`, SSH keys (`.pem`, `.key`, `id_rsa*`), AWS credentials (`.aws/`), npm tokens (`.npmrc`), Docker configs (`.dockercfg`), or secrets files (`secrets.yml`) are automatically skipped during scanning—even if explicitly requested. This prevents accidental exposure to external services.
+
+**AI API keys remain local.** The optional AI advisor only stores credentials in your user-local `~/.config/phantomguard/ai.json` with owner-only `0600` permissions. The Git repository's `.phantomguard.json` configuration **never** contains API keys. Keys are fetched at runtime only when you manually run `phantomguard ai explain`.
+
+**Deterministic verification never phones home.** The `verify` command and installed Git hook perform only registry lookups (PyPI, npm); they never contact AI providers, analytics platforms, or external services beyond the package registries themselves.
+
+**Prevent accidental commits:** Git is configured to ignore credential files by default (see `.gitignore`). For additional safety, use `git-crypt` or `SOPS` to encrypt secret files and prevent unencrypted credentials from being staged:
+
+```sh
+# Example: encrypt .env files at rest in the repository
+git-crypt init
+echo ".env filter=git-crypt diff=git-crypt" > .gitattributes
+git-crypt add-user your-email@example.com
+git add .gitattributes
+```
 
 ---
 

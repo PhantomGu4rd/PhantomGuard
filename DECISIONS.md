@@ -50,3 +50,44 @@ This file records the security and product decisions that shape the v0.1.3 relea
 - Release icons use each platform's native mechanism: a checked-in Windows executable resource, a macOS `PhantomGuard.app` bundle with an ICNS asset, and a Linux desktop launcher with a PNG icon. The CLI binary remains available in every archive.
 - Release publishing enumerates the expected artifacts instead of globbing a directory, preventing a stale build artifact from being attached to a release.
 - CI checks formatting, static analysis, unit and integration tests, the race detector, platform archives, installers on Linux/Windows/macOS, and the Docker build.
+
+## Security audit
+
+### Data exposure boundaries
+
+- ✅ **Repository configuration (``.phantomguard.json`) never contains credentials.** Supported fields are fail mode, language selection, allowlist, ignore patterns, custom aliases, and cache TTL.
+- ✅ **API keys are never sent to Git.** AI credentials live only in user-local `~/.config/phantomguard/ai.json` (Unix) or `%APPDATA%\phantomguard\ai.json` (Windows), marked as user-read-only.
+- ✅ **Credential files are actively skipped during scanning.** The scanner rejects `.env*`, `.aws/`, `.ssh/`, `.npmrc`, `.dockercfg`, `secrets.yml`, certificate files (`*.pem`, `*.crt`), SSH keys (`id_rsa*`, etc.), and other known secret patterns before they can be read or analyzed.
+- ✅ **`verify`, hooks, and TUI never contact external services beyond PyPI and npm registries.** No telemetry, analytics, or external validation occurs outside explicitly invoked optional commands.
+- ✅ **Only `ai explain` uses external AI providers,** and only when manually invoked after deterministic verification finds a confirmed phantom.
+
+### Third-party and external call safety
+
+- ✅ **All HTTP clients enforce strict timeouts.** Registry validation uses 3-second request timeout + 8-second scan budget; AI calls use 10-second timeout.
+- ✅ **Endpoints are allowlisted.** AI providers and registry URLs are hardcoded; no environment variable or configuration file can redirect network traffic to an attacker-controlled server.
+- ✅ **Package names are validated before interpolation.** All candidate names match the `[A-Za-z0-9._:/-]*` pattern; underscore and dash normalization follows package registry rules, not user input.
+- ✅ **DNS failures, connection timeouts, and non-definitive HTTP responses default to `unknown`, never silently treated as safe.** Conservative unknown-blocking in strict mode prevents network degradation from weakening policy.
+
+### Local and staging-only verification
+
+- ✅ **No repository-controlled code executes.** The Git hook invokes a trusted `phantomguard` binary on `PATH`, not a repository-controlled script.
+- ✅ **Staged-only verification prevents working-tree manipulation.** The `verify` command reads configuration and source code exclusively from the Git index, ensuring unstaged changes cannot weaken enforcement.
+- ✅ **Cache corruption is not fatal.** Malformed cache entries are treated as cache misses; the file is preserved for diagnosis and a fresh lookup is performed.
+- ✅ **Configuration tampering is detected.** Strict mode enforces strong provenance evidence from the Git index, so an unstaged edit to `.phantomguard.json` or a manifest cannot retroactively exempt a staged dependency.
+
+### Incident response and transparency
+
+- ✅ **All skipped files are reported with explicit reasons.** Users know when a file exceeds size limits, contains binary content, matches credential patterns, or is ignored by policy.
+- ✅ **Analysis incompleteness is a first-class result.** Oversized files, unresolved dynamic imports, and binary content block commits in strict mode rather than being silently excluded.
+- ✅ **Upstream vulnerabilities cannot alter local policy.** PhantomGuard does not query vulnerability databases, SBOM endpoints, or trusted supply-chain platforms; it only checks whether a package name exists in the target registry.
+
+## Release automation
+
+- **GoReleaser** is the standard Go release tool and replaces the custom `scripts/release-package/` script. Configuration lives in `.goreleaser.yml` and is invoked via GitHub Actions without custom Go code.
+- Release builds are triggered by Git tags (e.g., `git tag v1.0.0 && git push --tags`). The CI workflow tests, builds, packages, checksums, and publishes all six platform binaries automatically.
+- Archives include README.md, TUI_GUIDE.md, LICENSE, DEMO_WORKFLOW.md, and DECISIONS.md. Windows archives are `.zip`; Unix archives are `.tar.gz` with owner-executable permissions on binaries.
+- Archive checksums are generated and published alongside binaries. The `--generate-notes` flag auto-generates GitHub release notes from commit history between tags.
+- Local development can use `make release-local` to run the legacy `scripts/release-package/` script for backward compatibility, but production releases use GoReleaser.
+- Platform-specific desktop assets (Linux `.desktop` launcher, macOS `.app` bundle) require separate CI steps for full implementation and can be added in post-processing if needed.
+
+

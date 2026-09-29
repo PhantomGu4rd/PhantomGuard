@@ -370,6 +370,11 @@ func workingContents(root string, ignores []string) (map[string]string, []string
 		if !extractor.Relevant(relative) {
 			return nil
 		}
+		// Never scan files containing secrets or credentials.
+		if isSecretOrIgnored(relative) {
+			notices = append(notices, filepath.ToSlash(relative)+": skipped (contains secrets or credentials)")
+			return nil
+		}
 		if scanner.Ignored(filepath.ToSlash(relative), ignores) {
 			notices = append(notices, filepath.ToSlash(relative)+": ignored by .phantomguard.json")
 			return nil
@@ -452,4 +457,33 @@ func toolCacheDirectory(name string) bool {
 	default:
 		return false
 	}
+}
+
+// isSecretOrIgnored returns true if a file path contains credentials or secrets
+// that must never be scanned, analyzed, or sent to external services.
+func isSecretOrIgnored(path string) bool {
+	base := filepath.Base(path)
+	// Explicit credential files and patterns
+	if base == ".env" || strings.HasPrefix(base, ".env.") {
+		return true
+	}
+	if strings.Contains(path, "/.aws/") || strings.Contains(path, "\\.aws\\") {
+		return true
+	}
+	if strings.Contains(path, "/.ssh/") || strings.Contains(path, "\\.ssh\\") {
+		return true
+	}
+	if base == ".npmrc" || base == ".pypirc" || base == ".dockercfg" || base == ".docker" {
+		return true
+	}
+	if base == "secrets.yml" || base == "secrets.yaml" || base == "secrets.json" {
+		return true
+	}
+	if strings.HasSuffix(base, ".pem") || strings.HasSuffix(base, ".key") || strings.HasSuffix(base, ".crt") || strings.HasSuffix(base, ".p12") || strings.HasSuffix(base, ".pfx") {
+		return true
+	}
+	if strings.HasPrefix(base, "id_rsa") || strings.HasPrefix(base, "id_dsa") || strings.HasPrefix(base, "id_ecdsa") || strings.HasPrefix(base, "id_ed25519") {
+		return true
+	}
+	return false
 }

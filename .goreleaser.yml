@@ -1,0 +1,65 @@
+version: 2
+
+project_name: phantomguard
+
+before:
+  hooks:
+    - go mod download
+    - go mod verify
+
+builds:
+  - id: phantomguard
+    main: ./cmd/phantomguard
+    binary: phantomguard
+    targets:
+      - linux_amd64
+      - linux_arm64
+      - darwin_amd64
+      - darwin_arm64
+      - windows_amd64
+      - windows_arm64
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w -X github.com/phantomguard/phantomguard/pkg/buildinfo.Version={{.Version}}
+    env:
+      - CGO_ENABLED=0
+
+archives:
+  - id: phantomguard
+    format_overrides:
+      - goos: windows
+        format: zip
+    name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
+    files:
+      - README.md
+      - TUI_GUIDE.md
+      - LICENSE
+      - DEMO_WORKFLOW.md
+      - DECISIONS.md
+
+checksum:
+  name_template: checksums.txt
+  algorithm: sha256
+
+snapshot:
+  name_template: "{{ .Version }}-next"
+
+release:
+  mode: replace
+  draft: false
+  prerelease: false
+  name_template: "PhantomGuard {{ .Version }}"
+  extra_templated_files:
+    # Include platform-specific assets in the release
+    # Note: Platform-specific assets (Linux desktop launcher, macOS app bundle)
+    # require post-processing and should be added via additional CI steps if needed.
+
+changelog:
+  use: github
+  sort: asc
+  filters:
+    exclude:
+      - "^chore:"
+      - "^docs:"
+      - "^test:"
