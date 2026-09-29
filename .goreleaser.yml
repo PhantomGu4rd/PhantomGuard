@@ -50,7 +50,7 @@ release:
   draft: false
   prerelease: false
   name_template: "PhantomGuard {{ .Version }}"
-  extra_templated_files:
+  extra_files:
     # Include platform-specific assets in the release
     # Note: Platform-specific assets (Linux desktop launcher, macOS app bundle)
     # require post-processing and should be added via additional CI steps if needed.
